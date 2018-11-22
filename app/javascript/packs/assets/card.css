@@ -1,0 +1,38 @@
+/*CARD*/
+.ivu-card {
+  background: url(
+  data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAALklEQVQYV2N8eOehsbyK/FkGLIARJIZLAVgSlwK4JDYFKJLoCjAkkRVglYQpAAAAQRrZu6sXGwAAAABJRU5ErkJggg==
+  ) repeat;
+
+  padding-bottom: 3px;
+  margin: 0 5px 5px 5px;
+  width: fit-content;
+  display: inline-block;
+  float: left;
+}
+
+.ivu-card-head {
+  padding-top: 5px;
+  padding-bottom: 3px;
+}
+
+.ivu-card-extra {
+  /*top: -15px;*/
+  top: 6px;
+  height: 30px;
+}
+
+.ivu-card-extra > a {
+  color: black;
+}
+
+.ivu-card-body {
+  padding: 5px 5px 0 5px;
+}
+
+.refresh-card-button {
+  border: 0;
+  top: -5px;
+  width: auto !important;
+  height: auto !important;
+}

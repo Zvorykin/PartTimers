@@ -1,0 +1,59 @@
+.layout {
+  border: 1px solid #d7dde4;
+  background: #f5f7f9;
+}
+
+.layout-header {
+  height: 60px;
+  width: 100%;
+  background: #5b6270;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
+  position: relative;
+}
+
+.layout-nav {
+  width: 700px;
+  margin: 0 auto;
+}
+
+.ivu-tabs-bar {
+  margin-bottom: 5px;
+}
+
+.ivu-tabs-content {
+  height: 650px;
+}
+
+.layout-content {
+  margin: 5px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 4px;
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  min-height: 600px;
+}
+
+.layout-copy {
+  text-align: center;
+  padding: 10px 0 20px;
+  color: #9ea7b4;
+}
+
+.layout-logo {
+  width: 100px;
+  height: 30px;
+  background: #5b6270;
+  border-radius: 3px;
+  float: left;
+  position: relative;
+  top: 15px;
+  left: 20px;
+}
+
+.ivu-menu-item-active, .ivu-menu-item-selected {
+  color: white !important;
+}

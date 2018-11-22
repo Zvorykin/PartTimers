@@ -1,0 +1,24 @@
+{
+  "name": "parttimers_ruby",
+  "private": true,
+  "dependencies": {
+    "@rails/webpacker": "3.5",
+    "axios": "0.18.0",
+    "babel-plugin-transform-runtime": "6.23.0",
+    "iview": "2.3.2",
+    "iview-loader": "1.2.2",
+    "lodash": "4.17.11",
+    "moment": "2.22.2",
+    "pug": "2.0.3",
+    "vue": "2.5.17",
+    "vue-axios": "2.1.4",
+    "vue-constants": "1.0.3",
+    "vue-lodash": "2.0.0",
+    "vuex": "3.0.1"
+  },
+  "devDependencies": {
+    "vue-loader": "14.2.2",
+    "vue-template-compiler": "2.5.17",
+    "webpack-dev-server": "2.11.2"
+  }
+}

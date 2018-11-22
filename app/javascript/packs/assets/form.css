@@ -1,0 +1,97 @@
+/*FORM*/
+.ivu-form-item {
+    /*margin-bottom: 10px;*/
+    margin-bottom: 6px;
+}
+
+.ivu-form-item-label {
+    line-height: 6px !important;
+    padding-bottom: 0 !important;
+    padding-right: 5px !important;
+}
+
+textarea.ivu-input {
+    padding-bottom: 1px;
+    padding-top: 1px;
+    min-height: 20px !important;
+    line-height: 20px !important;
+}
+
+.ivu-select-selection, .ivu-select-placeholder, .ivu-select-single,
+.ivu-select-small, .ivu-select, .ivu-select-multiple, .ivu-input-small,
+.ivu-form-item-content, .ivu-select-selected-value {
+    min-height: 22px !important;
+    line-height: 22px !important;
+    /*height: auto !important;*/
+}
+
+/*.ivu-input {*/
+/*min-height: 22px !important;*/
+/*line-height: 22px !important;*/
+/*}*/
+
+.ivu-tag {
+    margin-top: 1px !important;
+    margin-bottom: 1px !important;
+    height: 20px;
+}
+
+.ivu-select-multiple, .ivu-select-selection, .ivu-select-placeholder, .ivu-select-selected-value {
+    height: auto !important;
+}
+
+.ivu-select-multiple .ivu-select-input {
+    height: 22px !important;
+}
+
+/*input.ivu-input {*/
+/*height: 24px !important;*/
+/*}*/
+
+.ivu-date-picker-rel {
+    width: 105px;
+}
+
+.ivu-select-dropdown {
+    /*left: 0 !important;*/
+}
+
+/*DROPDOWN*/
+.ivu-dropdown-item, .ivu-select-item {
+    text-align: left;
+}
+
+.ivu-dropdown-rel a {
+    color: #80848f;
+}
+
+/*SWITCH*/
+.ivu-switch {
+    height: 18px;
+}
+
+.ivu-switch-small {
+    width: 35px;
+}
+
+.ivu-switch:after {
+    width: 15px;
+    height: 15px;
+}
+
+.ivu-switch-checked:after {
+    left: 30px;
+}
+
+.ivu-switch-checked.ivu-switch-small:after {
+    left: 18px;
+}
+
+.ivu-input-group-small {
+    top: 0 !important;
+}
+
+/*ICON*/
+.ivu-form-item .ivu-input-wrapper-small .ivu-input-icon {
+    line-height: 24px;
+}

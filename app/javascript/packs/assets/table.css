@@ -1,0 +1,49 @@
+/*TABLE*/
+.ivu-table-small td {
+  height: 25px;
+  line-height: 25px;
+}
+
+.ivu-table-small th {
+  height: 30px;
+  line-height: 30px;
+}
+
+.ivu-table-cell {
+  padding: 0 10px;
+  white-space: pre-line;
+}
+
+.ivu-checkbox-wrapper {
+  margin: 0;
+}
+
+.ivu-table-footer {
+  height: 24px;
+  line-height: 25px;
+  padding: 0 10px;
+  border-top: 1px solid rgb(233, 234, 236);
+  text-align: right;
+}
+
+.invisible-column {
+  display: none;
+}
+
+.ivu-table .disabled-row td {
+  background-color: #eee;
+  /*color: white;*/
+}
+
+.ivu-table-footer > span {
+  font-weight: bold;
+}
+
+/*SUBTABLE*/
+.subtable {
+  border: 0;
+}
+
+.ivu-table .no-bottom-border td {
+  border-bottom: 0;
+}
