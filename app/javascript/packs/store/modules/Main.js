@@ -1,25 +1,18 @@
 const state = {
-  apiLink:'',
-  masterLogin: false
+  loggedIn: false,
+  admin: false
 }
 
 const mutations = {
-  UPDATE_APILINK(state, link) {
-    state.apiLink = link
+  UPDATE_ADMIN(state) {
+    state.admin = true
   },
-  UPDATE_MASTERLOGIN(state) {
-    state.masterLogin = true
-  }
-}
-
-const actions = {
-  updateMedics ({ commit }) {
-    commit('UPDATE_MEDICLIST')
+  LOGIN(state) {
+    state.loggedIn = true
   }
 }
 
 export default {
   state,
-  mutations,
-  actions
+  mutations
 }

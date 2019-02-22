@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "required": [
+    "patient_name",
+    "date",
+    "medic_id",
+    "services"
+  ],
+  "properties": {
+    "enabled": {
+      "type": "boolean"
+    },
+    "patient_name": {
+      "type": "string",
+      "minLength": 2
+    },
+    "medic_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    }
+  }
+}

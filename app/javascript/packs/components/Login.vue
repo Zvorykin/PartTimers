@@ -6,10 +6,10 @@
         Row(type="flex", justify="center")
           Col(span="12")
             FormItem
-              Button(type='primary', :long="true", @click="loginUser") Войти с обычными правами доступа
+              Button(type='primary', :long="true", @click="login(false)") Войти с обычными правами доступа
           Col(span="10")
             FormItem(:label-width="5")
-              Button(type='success', :long="true", @click="loginMaster") Войти, используя мастер-пароль
+              Button(type='success', :long="true", @click="login(true)") Войти, используя мастер-пароль
           Col(span="2")
             FormItem(:label-width="5")
               Input(v-model='password', type="password", autofocus)
@@ -20,45 +20,41 @@
     components: {},
     data() {
       return {
-        password: ""
+        password: "",
       }
     },
     computed: {},
     watch: {},
     methods: {
-      loginUser() {
-        let request = this.axios({
-          method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/login/user`
-        })
-          .then(response => {
-            this.$Message.success('Авторизация прошла успешно!')
-            this.$emit('loginUser')
+      async login(isAdmin = false) {
+        const cb = async () => {
+          const response = await this.axios({
+            method: 'POST',
+            url: 'login',
+            data: {
+              isAdmin,
+              password: this.password,
+            },
           })
 
-        this.$makeRequest(this, request)
-      },
-      loginMaster() {
-        let request = this.axios({
-          method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/login/master`,
-          params: {password: this.password}
-        })
-          .then(response => {
-            if (response.data === 'Wrong password') {
-              this.$Message.error('Пароль набран неверно!')
-            } else {
-              this.$Message.success('Авторизация прошла успешно!')
-              this.$emit('loginMaster')
+          if (response.data.result) {
+            this.$store.commit('LOGIN')
+            if (isAdmin) {
+              this.axios.defaults.headers.common['Master'] = true
+              this.$store.commit('UPDATE_ADMIN')
             }
-          })
+            this.$Message.success('Авторизация прошла успешно!')
+          } else {
+            this.$Message.error('Пароль набран неверно!')
+          }
+        }
 
-        this.$makeRequest(this, request)
+        await this.$makeRequest(this, cb)
       },
     },
     mounted() {
       //this.loginMaster()
-    }
+    },
   }
 </script>
 

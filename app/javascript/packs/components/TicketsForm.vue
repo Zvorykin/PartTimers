@@ -20,11 +20,10 @@
         FormItem(label='Услуги', :labelWidth="40")
           Select(v-model="talon.services", size="small", transfer, style="width:1210px", multiple, filterable, label-in-value)
               Option(v-for="item in services", :value="item.id", :key="item.name") {{item.code}} - {{item.name}}
+
 </template>
 
 <script>
-  let moment = require('moment')
-
   export default {
     components: {},
     data() {
@@ -42,56 +41,70 @@
     },
     computed: {
       createDisabled() {
-        let selServices = []
-
-        this.talon.services.forEach(item => {
-          let foundService = this._.find(this.services, {id: item})
+        const talonServices = this.talon.services.reduce((acc, item) => {
+          const foundService = this.services.find(service => service.id === item)
           if (foundService) {
-            selServices.push(foundService)
+            acc.push(foundService)
           }
-        })
 
-        let includesSurgery = this._.find(selServices, {surgery: 1}) !== undefined
+          return acc
+        }, [])
 
-        return (!this.talon.medicId || this.talon.services.length === 0) ||
-          (this.talon.patientName.length === 0 && includesSurgery)
+        const includesSurgery = talonServices.some(value => value.surgery)
+
+        return !this.talon.medicId || talonServices.length === 0 ||
+          this.talon.patientName.length === 0 || includesSurgery
       }
     },
     watch: {},
     methods: {
       async refresh() {
         let medicsRequest = this.axios({
-            method: 'GET',
-            url: `${this.$store.state.Main.apiLink}/medics/user`
-          }),
-          servicesRequest = this.axios({
-            method: 'GET',
-            url: `${this.$store.state.Main.apiLink}/services/user`
-          })
+              method: 'GET',
+              url: 'medics',
+              params: {
+                enabled: true,
+              }
+            }),
+            servicesRequest = this.axios({
+              method: 'GET',
+              url: 'services',
+              params: {
+                enabled: true,
+              }
+            })
 
-        let results = await Promise.all([medicsRequest, servicesRequest])
+        let [medicsRes, servicesRes] = await Promise.all([medicsRequest, servicesRequest])
 
-        this.medics = results[0].data
-        this.services = results[1].data
+        this.medics = medicsRes.data
+        this.services = servicesRes.data
       },
-      createTicket() {
-        let request = this.axios({
-          method: 'POST',
-          url: `${this.$store.state.Main.apiLink}/tickets`,
-          data: this.talon
-        })
-          .then(response => {
-            if (!this.saveAfterSubmit) {
-              this.talon.medicId = undefined
-              this.talon.patientName = ''
-              this.talon.services = []
+      async createTicket() {
+        const cb = async () => {
+          await this.axios({
+            method: 'POST',
+            url: `tickets`,
+            data: {
+              ticket: {
+                date: this.talon.date,
+                patient_name: this.talon.patientName,
+                services: this.talon.services,
+                medic_id: this.talon.medicId
+              },
             }
-
-            this.$Message.success('Направление успешно создано!');
-            this.$emit('reloadTicketList')
           })
 
-        this.$makeRequest(this, request)
+          if (!this.saveAfterSubmit) {
+            this.talon.medicId = undefined
+            this.talon.patientName = ''
+            this.talon.services = []
+          }
+
+          this.$Message.success('Направление успешно создано!');
+          this.$emit('reloadTicketList')
+        }
+
+        await this.$makeRequest(this, cb)
       }
     },
     created() {

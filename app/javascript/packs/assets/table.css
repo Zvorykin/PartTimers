@@ -2,11 +2,13 @@
 .ivu-table-small td {
   height: 25px;
   line-height: 25px;
+  font-size: 12px;
 }
 
 .ivu-table-small th {
   height: 30px;
   line-height: 30px;
+  font-size: 12px;
 }
 
 .ivu-table-cell {

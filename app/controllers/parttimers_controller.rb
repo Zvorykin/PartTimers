@@ -1,4 +1,4 @@
-class ParttimersController < ApplicationController
+class ParttimersController < ActionController::Base
   def index
   end
 end

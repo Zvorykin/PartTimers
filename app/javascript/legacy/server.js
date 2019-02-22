@@ -83,17 +83,6 @@ async function startSpreadsheetAppAndDeleteFileAfterClose(reportPath) {
   }
 }
 
-async function saveReportInDB(type, content) {
-  let params = {
-    $createdAt: moment().format(),
-    $type: type,
-    $content: content
-  }
-
-  let result = await db.queryRun(`INSERT INTO reports (createdAt, type, content)
-           VALUES ($createdAt, $type, $content)`, params)
-}
-
 // START
 (async function () {
   db = await sqlite_utils.createDBConnection(SETTINGS.DB_PATH)

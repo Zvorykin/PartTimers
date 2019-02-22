@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "enabled": {
+      "type": "boolean"
+    },
+    "patient_name": {
+      "type": "string",
+      "minLength": 2
+    },
+    "medic_id": {
+      "$ref": "./definitions.json#/definitions/medic_id"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    }
+  }
+}

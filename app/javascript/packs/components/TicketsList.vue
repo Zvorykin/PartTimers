@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  let moment = require('moment')
+  const moment = require('moment')
   import TicketsForm from './TicketsForm.vue'
 
   export default {
@@ -32,7 +32,7 @@
         columns: [
           {
             title: 'В работе',
-            key: 'active',
+            key: 'enabled',
             width: 100,
             align: 'center',
             sortable: true,
@@ -40,7 +40,7 @@
               return h('div', [
                 h('i-switch', {
                   props: {
-                    value: params.row.active === 1,
+                    value: params.row.enabled,
                     size: 'small'
                   },
                   on: {
@@ -65,7 +65,7 @@
           },
           {
             title: 'ФИО пациента',
-            key: 'patientName',
+            key: 'patient_name',
             width: 140,
             sortable: true
           },
@@ -77,7 +77,7 @@
           },
           {
             title: 'Время создания',
-            key: 'createdAt',
+            key: 'created_at',
             width: 140,
             align: 'center',
             sortable: true
@@ -102,69 +102,88 @@
     watch: {},
     methods: {
       async refresh() {
-        let request = this.axios({
-          method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/medics/user`
-        })
-          .then(response => {
-            this.medics = [{name: 'Все', id: 0}]
-            this.medics = this.medics.concat(response.data)
-            this.medicId = this.medics[0].id
+        const cb = async () => {
+          const res = await this.axios({
+            method: 'GET',
+            url: `medics`,
+            params: {
+              enabled: true
+            }
           })
 
-        this.$makeRequest(this, request)
+          this.medics = [{name: 'Все', id: 0}, ...res.data]
+          this.medicId = 0
+        }
+
+        await this.$makeRequest(this, cb)
       },
       reloadTicketListIfAutoReload() {
         if (this.autoReload) {
           this.reloadTicketList()
         }
       },
-      loadTickets() {
-        this.loading = true
-        this.tableData = []
+      async loadTickets() {
+        const cb = async () => {
+          this.tableData = []
 
-        let request = this.axios({
-          method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/tickets/list`,
-          params: {
-            dateMonth: this.reportDate,
-            medicId: this.medicId,
-            showDeleted: this.showDeleted,
-            showSurgical: this.$store.state.Main.masterLogin
+          const params = {
+            date: moment(this.reportDate).endOf('month')
           }
-        })
-          .then(response => {
-            response.data.forEach(item => {
-              item.createdAt = moment(item.createdAt).format('Y-MM-DD HH:mm:ss')
-              this.tableData.push(item)
-            })
+
+          if (!this.showDeleted) {
+            params.enabled = true;
+          }
+
+          if (this.$store.state.Main.admin) {
+            params.showSurgical = this.$store.state.Main.admin
+          }
+
+          if (this.medicId) {
+            params.medicId = this.medicId
+          }
+
+          const res = await this.axios({
+            method: 'GET',
+            url: 'tickets',
+            params
           })
 
-        this.$makeRequest(this, request)
+          res.data.forEach(item => {
+            item.created_at = moment(item.created_at).format('Y-MM-DD HH:mm:ss')
+            item.services = item.services.reduce((line, service) => {
+              line += `${line || ''}\n${service.code} - ${service.name}`
+              return line.trim()
+            }, '')
+            this.tableData.push(item)
+          })
+        }
+
+        await this.$makeRequest(this, cb)
       },
       reloadTicketList() {
         this.reportDate = new Date
         this.loadTickets()
       },
-      setTicketActiveState(id, active) {
-        let request = this.axios({
-          method: 'PATCH',
-          url: `${this.$store.state.Main.apiLink}/tickets`,
-          data: {
-            id: id,
-            active: active
-          }
-        })
-          .then(response => {
-            this.$Message.success('Обновление успешно выполнено!')
+      setTicketActiveState(id, enabled) {
+        const cb = async () => {
+          await this.axios({
+            method: 'PATCH',
+            url: `tickets/${id}`,
+            data: {
+              ticket: {
+                enabled
+              }
+            }
           })
 
-        this.$makeRequest(this, request, false)
+          this.$Message.success('Обновление успешно выполнено!')
+        }
+
+        this.$makeRequest(this, cb, false)
       }
     },
     mounted() {
       this.refresh()
-      //this.loadTickets()
     }
   }
 </script>

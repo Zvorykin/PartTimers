@@ -2,15 +2,15 @@
   div(id="app")
     Tabs(v-model="selTab", size='small')
       TabPane(label="Логин", name='login', icon="log-in", v-if="!loggedIn")
-        login(v-on:loginUser="login('user')", v-on:loginMaster="login('master')")
-      TabPane(label="Направления", name="tickets", icon="edit", )
+        login()
+      TabPane(label="Направления", name="tickets", icon="edit", v-if="loggedIn")
         tickets-list(v-if="loggedIn")
-      TabPane(label="Отчет по направлениям", name="ticketsReport", icon="ios-list-outline", )
-        tickets-report(v-if="masterLogin")
-      TabPane(label="Отчет по выплатам", name="paymentsReport", icon="ios-list", )
-        PaymentsReport(v-if="masterLogin")
-      TabPane(label="Администрирование", name="admin", icon="settings",)
-        Admin(v-if="masterLogin")
+      <!--TabPane(label="Отчет по направлениям", name="ticketsReport", icon="ios-list-outline", v-if="loggedIn && isAdmin")-->
+        <!--tickets-report(v-if="isAdmin")-->
+      <!--TabPane(label="Отчет по выплатам", name="paymentsReport", icon="ios-list", v-if="loggedIn && isAdmin")-->
+        <!--PaymentsReport(v-if="isAdmin")-->
+      <!--TabPane(label="Администрирование", name="admin", icon="settings", v-if="loggedIn && isAdmin")-->
+        <!--Admin(v-if="isAdmin")-->
 </template>
 
 <script>
@@ -29,34 +29,30 @@
       PaymentsReport,
       Admin,
     },
+    computed: {
+      loggedIn() {
+        return this.$store.state.Main.loggedIn
+      },
+      isAdmin() {
+        return this.$store.state.Main.isAdmin
+      }
+    },
     data() {
       return {
-        loggedIn: false,
-        masterLogin: false,
+        admin: false,
         selTab: 'login',
       }
     },
     methods: {
-      login(userType) {
-        this.$store.commit('UPDATE_APILINK', `${location.origin}/api`)
-
-        this.loggedIn = true
-        this.selTab = 'tickets'
-
-        if (userType === 'master') {
-          this.masterLogin = true
-          this.$store.commit('UPDATE_MASTERLOGIN')
-        }
-      },
     },
-    created() {
+    async created() {
       this.$Loading.config({
         height: 5,
       })
 
-      this.$store.commit('UPDATE_APILINK', `${location.origin}/api`)
-    },
-    mounted() {
+      this.axios.defaults.baseURL = `${location.origin}/api`
+      this.axios.defaults.headers.common['Content-Type'] = 'application/json';
+      this.axios.defaults.headers.common['Accept'] = 'application/json';
     },
   }
 </script>
