@@ -4,13 +4,13 @@
     Button(slot="extra", icon="refresh",  @click="refresh", type='text', shape="circle", class="refresh-card-button")
     Form(:labelWidth="50" inline)
       FormItem(label='Врач', :labelWidth="40")
-        Select(v-model="talon.medicId", size="small", transfer, style="width:300px", filterable)
+        Select(v-model="ticket.medicId", size="small", transfer, style="width:300px", filterable)
           Option(v-for="item in medics", :value="item.id", :key="item.name")  {{item.name}}
       FormItem(label='Дата талона', :labelWidth="80")
-        Date-picker(v-model="talon.date", format="dd.MM.yyyy", placement='bottom-end', type="date", size="small",
-          :clearable="false")
+        Date-picker(v-model="ticket.date", format="dd.MM.yyyy", placement='bottom-end', type="date", size="small",
+        :clearable="false")
       FormItem(:labelWidth="5")
-        Input(v-model.trim='talon.patientName', placeholder='ФИО пациента', size='small')
+        Input(v-model.trim='ticket.patientName', placeholder='ФИО пациента', size='small')
       FormItem(:labelWidth="5")
         Checkbox(v-model="saveAfterSubmit") сохранять поля
       FormItem(:labelWidth="10")
@@ -18,8 +18,8 @@
     Row(type="flex" justify="end")
       Form(inline)
         FormItem(label='Услуги', :labelWidth="40")
-          Select(v-model="talon.services", size="small", transfer, style="width:1210px", multiple, filterable, label-in-value)
-              Option(v-for="item in services", :value="item.id", :key="item.name") {{item.code}} - {{item.name}}
+          Select(v-model="ticket.services", size="small", transfer, style="width:1210px", multiple, filterable, label-in-value)
+            Option(v-for="item in services", :value="item.id", :key="item.name") {{item.code}} - {{item.name}}
 
 </template>
 
@@ -28,20 +28,20 @@
     components: {},
     data() {
       return {
-        talon: {
+        ticket: {
           medicId: undefined,
           patientName: '',
           date: new Date,
-          services: []
+          services: [],
         },
         services: [],
         medics: [],
-        saveAfterSubmit: false
+        saveAfterSubmit: false,
       }
     },
     computed: {
       createDisabled() {
-        const talonServices = this.talon.services.reduce((acc, item) => {
+        const ticketServices = this.ticket.services.reduce((acc, item) => {
           const foundService = this.services.find(service => service.id === item)
           if (foundService) {
             acc.push(foundService)
@@ -50,29 +50,29 @@
           return acc
         }, [])
 
-        const includesSurgery = talonServices.some(value => value.surgery)
+        const includesSurgery = ticketServices.some(value => value.surgery)
 
-        return !this.talon.medicId || talonServices.length === 0 ||
-          this.talon.patientName.length === 0 || includesSurgery
-      }
+        return !this.ticket.medicId || ticketServices.length === 0 ||
+          this.ticket.patientName.length === 0 || includesSurgery
+      },
     },
     watch: {},
     methods: {
       async refresh() {
         let medicsRequest = this.axios({
-              method: 'GET',
-              url: 'medics',
-              params: {
-                enabled: true,
-              }
-            }),
-            servicesRequest = this.axios({
-              method: 'GET',
-              url: 'services',
-              params: {
-                enabled: true,
-              }
-            })
+            method: 'GET',
+            url: 'medics',
+            params: {
+              enabled: true,
+            },
+          }),
+          servicesRequest = this.axios({
+            method: 'GET',
+            url: 'services',
+            params: {
+              enabled: true,
+            },
+          })
 
         let [medicsRes, servicesRes] = await Promise.all([medicsRequest, servicesRequest])
 
@@ -85,31 +85,29 @@
             method: 'POST',
             url: `tickets`,
             data: {
-              ticket: {
-                date: this.talon.date,
-                patient_name: this.talon.patientName,
-                services: this.talon.services,
-                medic_id: this.talon.medicId
-              },
-            }
+              date: this.ticket.date,
+              patient_name: this.ticket.patientName,
+              services: this.ticket.services,
+              medic_id: this.ticket.medicId,
+            },
           })
 
           if (!this.saveAfterSubmit) {
-            this.talon.medicId = undefined
-            this.talon.patientName = ''
-            this.talon.services = []
+            this.ticket.medicId = undefined
+            this.ticket.patientName = ''
+            this.ticket.services = []
           }
 
-          this.$Message.success('Направление успешно создано!');
+          this.$Message.success('Направление успешно создано!')
           this.$emit('reloadTicketList')
         }
 
         await this.$makeRequest(this, cb)
-      }
+      },
     },
     created() {
       this.refresh()
-    }
+    },
   }
 </script>
 

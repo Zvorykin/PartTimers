@@ -45,10 +45,10 @@ class TicketsController < ApplicationController
   private
 
   def validate_common_params!(required = false)
-    param! :medicId, Integer, min: 0, required: required
+    param! :medic_id, Integer, min: 0, required: required
     param! :enabled, :boolean
     param! :date, Date, required: required
-    param! :patientName, String, required: required
+    param! :patient_name, String, required: required
   end
 
   def validate_services_ids!(required = false)

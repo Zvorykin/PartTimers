@@ -11,13 +11,14 @@ export default async (app, cb, showLoading = true) => {
 
     app.$Loading.error()
 
-    const {statusText: error, status: code, body: message} = err.response || {}
+    const {statusText: error, status: code, body: message, data} = err.response || {}
 
-    console.log(message)
+    console.dir(err)
 
     app.$Modal.error({
       title: `Ошибка ${code || ''}: ${error || ''}`,
-      content: `${err.exception || ''} ${message || ''} ${err.stack || err.message}`,
+      content: `${data} \n
+       ${err.exception || ''} ${message || ''} ${err.stack || err.message}`.trim(),
     })
   }
 

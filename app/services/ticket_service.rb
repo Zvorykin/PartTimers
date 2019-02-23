@@ -3,7 +3,7 @@ module TicketService
     include BasicService
 
     def find(params)
-      query_params = %i[date medicId enabled showSurgical patientName]
+      query_params = %i[date medic_id enabled show_surgical patient_name]
       date, medic_id, enabled, surgical, patient_name = params.values_at(*query_params)
 
       where_conditions = {}
@@ -20,14 +20,16 @@ module TicketService
         where_conditions[:services] = { surgery: surgical } unless surgical.nil?
       end
 
-      Ticket.left_outer_joins(:services, :medic)
-        .order(date: 'desc', created_at: 'desc')
+      Ticket.includes(:services, :medic)
+        .references(:services)
+        .order(date: :desc, created_at: :desc)
+        .order(Service.arel_table[:code].desc)
         .distinct
         .where(where_conditions)
     end
 
     def create(params)
-      req_params = %i[medicId patientName date services]
+      req_params = %i[medic_id patient_name date services]
       medic_id, patient_name, date, services_ids = params.values_at(*req_params)
 
       Ticket.new(
