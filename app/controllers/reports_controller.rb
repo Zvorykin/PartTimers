@@ -1,5 +1,5 @@
 class ReportsController < ApplicationController
-  def tickets
+  def view_tickets
     param! :date_from, Date, required: true
     param! :date_by, Date, required: true
 

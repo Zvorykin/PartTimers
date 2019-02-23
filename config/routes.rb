@@ -8,7 +8,8 @@ Rails.application.routes.draw do
 
     post 'login', to: 'login#auth'
 
-    get 'reports/tickets', to: 'reports#tickets'
+    get 'reports/tickets', to: 'reports#view_tickets'
+    post 'reports/tickets', to: 'reports#save_tickets' # to be done later
   end
 
   get 'parttimers/index'
