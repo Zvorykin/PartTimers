@@ -23,8 +23,7 @@ module TicketService
       Ticket.includes(:services, :medic)
         .references(:services)
         .order(date: :desc, created_at: :desc)
-        .order(Service.arel_table[:code].desc)
-        .distinct
+        .order(Service.arel_table[:code].asc)
         .where(where_conditions)
     end
 

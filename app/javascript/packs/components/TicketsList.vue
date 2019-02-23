@@ -130,8 +130,8 @@
             url: 'tickets',
             params: {
               date: moment(this.reportDate).endOf('month'),
-              show_surgical: this.$store.state.Main.admin,
-              medic_id: this.medicId,
+              show_surgical: this.$store.state.Main.admin ? null : false,
+              medic_id: this.medicId || null,
               enabled: this.showDeleted ? null : true,
             },
           })

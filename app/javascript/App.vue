@@ -5,8 +5,8 @@
         login()
       TabPane(label="Направления", name="tickets", icon="edit", v-if="loggedIn")
         tickets-list(v-if="loggedIn")
-      <!--TabPane(label="Отчет по направлениям", name="ticketsReport", icon="ios-list-outline", v-if="loggedIn && isAdmin")-->
-        <!--tickets-report(v-if="isAdmin")-->
+      TabPane(label="Отчет по направлениям", name="ticketsReport", icon="ios-list-outline", v-if="isAdmin")
+        tickets-report(v-if="isAdmin")
       <!--TabPane(label="Отчет по выплатам", name="paymentsReport", icon="ios-list", v-if="loggedIn && isAdmin")-->
         <!--PaymentsReport(v-if="isAdmin")-->
       <!--TabPane(label="Администрирование", name="admin", icon="settings", v-if="loggedIn && isAdmin")-->
@@ -34,7 +34,7 @@
         return this.$store.state.Main.loggedIn
       },
       isAdmin() {
-        return this.$store.state.Main.isAdmin
+        return this.$store.state.Main.admin
       }
     },
     data() {

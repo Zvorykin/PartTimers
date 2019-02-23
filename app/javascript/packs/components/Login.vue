@@ -1,5 +1,5 @@
 <template lang="pug">
-  div(class="login-container", v-on:submit.prevent="loginMaster")
+  div(class="login-container", v-on:submit.prevent="login")
     Card(class="login-card")
       p(slot='title') Логин
       Form
@@ -20,7 +20,7 @@
     components: {},
     data() {
       return {
-        password: "",
+        password: "5",
       }
     },
     computed: {},
@@ -53,7 +53,7 @@
       },
     },
     mounted() {
-      //this.loginMaster()
+      this.login(true)
     },
   }
 </script>

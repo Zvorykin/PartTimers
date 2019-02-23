@@ -3,7 +3,9 @@ class MedicsController < ApplicationController
 
   # GET /medics
   def index
-    @medics = Medic.joins(:manager).order(:name)
+    @medics = Medic.includes(:manager)
+                .references(:managers)
+                .order(:name)
 
     enabled = params[:enabled]
     @medics = @medics.where(enabled: enabled) if enabled

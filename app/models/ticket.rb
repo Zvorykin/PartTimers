@@ -1,4 +1,6 @@
 class Ticket < ApplicationRecord
+  scope :between_dates, ->(range) { where(date: range) }
+
   belongs_to :medic
   has_and_belongs_to_many :services
 

@@ -7,6 +7,8 @@ Rails.application.routes.draw do
     resources :medics
 
     post 'login', to: 'login#auth'
+
+    get 'reports/tickets', to: 'reports#tickets'
   end
 
   get 'parttimers/index'

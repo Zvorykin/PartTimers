@@ -53,25 +53,25 @@
         const includesSurgery = ticketServices.some(value => value.surgery)
 
         return !this.ticket.medicId || ticketServices.length === 0 ||
-          this.ticket.patientName.length === 0 || includesSurgery
+          this.ticket.patientName.length === 0 || (includesSurgery && !this.$store.state.Main.admin)
       },
     },
     watch: {},
     methods: {
       async refresh() {
+        const params = {
+          enabled: true,
+        }
+
         let medicsRequest = this.axios({
             method: 'GET',
             url: 'medics',
-            params: {
-              enabled: true,
-            },
+            params,
           }),
           servicesRequest = this.axios({
             method: 'GET',
             url: 'services',
-            params: {
-              enabled: true,
-            },
+            params,
           })
 
         let [medicsRes, servicesRes] = await Promise.all([medicsRequest, servicesRequest])
