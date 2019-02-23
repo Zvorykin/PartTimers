@@ -64,22 +64,6 @@
 
         this.table = this.$getConst('EMPTY_TABLE')
         this.table = await this.$makeRequest(this, cb)
-
-        //
-        //
-        // let request = this.axios({
-        //   method: 'GET',
-        //   url: `${this.$store.state.Main.apiLink}/tickets/report`,
-        //   params: {
-        //     date_from: this.$moment(this.dateFrom).format(),
-        //     date_by: this.$moment(this.dateBy).format(),
-        //   }
-        // })
-        //   .then(response => {
-        //     this.table = response.data.table
-        //   })
-        //
-        // this.$makeRequest(this, request)
       },
       async saveReport() {
         const { dateFrom, dateBy } = this.getFormattedDates()
@@ -99,27 +83,6 @@
         }
 
         await this.$makeRequest(this, cb)
-
-        //
-        // let dateFrom = this.$moment(this.dateFrom).format(),
-        //   dateBy = this.$moment(this.dateBy).format(),
-        //   data = {
-        //     dateFrom: dateFrom,
-        //     dateBy: dateBy,
-        //     columns: this.table.columns,
-        //     rows: this.table.data,
-        //   }
-        //
-        // let request = this.axios({
-        //   method: 'POST',
-        //   url: `${this.$store.state.Main.apiLink}/tickets/report`,
-        //   data: data,
-        // })
-        //   .then(response => {
-        //     this.$Message.success('Успешно сохранено!')
-        //   })
-        //
-        // this.$makeRequest(this, request)
       },
     },
     created() {

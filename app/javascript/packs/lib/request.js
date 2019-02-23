@@ -2,8 +2,9 @@ export default async (app, cb, showLoading = true) => {
   app.$Loading.start()
   if ((app.loading === false) && (showLoading)) app.loading = true
 
+  let res
   try {
-    await cb()
+    res = await cb()
 
     app.$Loading.finish()
   } catch (err) {
@@ -23,4 +24,5 @@ export default async (app, cb, showLoading = true) => {
   }
 
   if (app.loading) app.loading = false
+  return res && res.data
 }

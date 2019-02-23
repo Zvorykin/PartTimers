@@ -3,8 +3,6 @@ class ReportsController < ApplicationController
     param! :date_from, Date, required: true
     param! :date_by, Date, required: true
 
-    @report = {}
-    @report[:data] = ReportsService.get_tickets(params)
-    @report[:columns] = []
+    @report = ReportsService.get_tickets_report(params)
   end
 end
