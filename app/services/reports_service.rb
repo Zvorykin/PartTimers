@@ -36,33 +36,9 @@ module ReportsService
         data << medic_stats
       end
 
-      columns = columns.uniq.map! do |value|
-        {
-          key: value,
-          title: value,
-          width: 80,
-          align: 'center'
-        }
-      end
-
       {
         data: data.sort_by { |item| item['name'] },
-        columns: columns
-                   .unshift(
-                     title: 'Врач',
-                     key: 'name',
-                     width: 250,
-                     sortable: true,
-                     fixed: 'left'
-                   )
-                   .push(
-                     title: 'Всего',
-                     key: 'summary',
-                     width: 80,
-                     align: 'center',
-                     sortable: true,
-                     fixed: 'right'
-                   )
+        columns: columns.uniq
       }
     end
   end

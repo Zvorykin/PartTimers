@@ -63,7 +63,37 @@
         })
 
         this.table = this.$getConst('EMPTY_TABLE')
-        this.table = await this.$makeRequest(this, cb)
+        let { data, columns } = await this.$makeRequest(this, cb)
+
+        if (data && data.length && columns && columns.length) {
+          this.table.data = data
+
+          columns = columns.map(value => ({
+            key: value,
+            title: value,
+            width: 80,
+            align: 'center',
+          }))
+
+          columns.unshift({
+            title: 'Врач',
+            key: 'name',
+            width: 250,
+            sortable: true,
+            fixed: 'left',
+          })
+
+          columns.push({
+            title: 'Всего',
+            key: 'summary',
+            width: 80,
+            align: 'center',
+            sortable: true,
+            fixed: 'right',
+          })
+
+          this.table.columns = columns
+        }
       },
       async saveReport() {
         const { dateFrom, dateBy } = this.getFormattedDates()
@@ -77,7 +107,7 @@
               date_by: dateBy,
               columns: this.table.columns,
               rows: this.table.data,
-            }
+            },
           })
           this.$Message.success('Успешно сохранено!')
         }
