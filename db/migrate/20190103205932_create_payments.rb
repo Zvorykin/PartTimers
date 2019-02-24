@@ -7,6 +7,6 @@ class CreatePayments < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
-    add_index :payments, [:manager_id, :service_id], unique: true
+    add_index :payments, %i[manager_id service_id], unique: true
   end
 end

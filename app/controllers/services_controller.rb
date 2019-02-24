@@ -1,15 +1,12 @@
 class ServicesController < ApplicationController
-  before_action :set_service, only: [:show, :update, :destroy]
+  before_action :set_service, only: %i[show update destroy]
 
   # GET /services
   def index
-    @services = Service.order(:code).all
+    param! :enabled, :boolean
+    param! :surgery, :boolean
 
-    enabled = params[:enabled]
-    @services = @services.where(enabled: enabled) if enabled
-
-    surgery = params[:surgery]
-    @services = @services.where(surgery: surgery) if surgery
+    @services = ServicesService.find(params)
   end
 
   # GET /services/1
@@ -42,13 +39,8 @@ class ServicesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_service
-      @service = Service.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def service_params
-      params.require(:service).permit(:code, :name, :surgery, :enabled)
-    end
+  def set_service
+    @service = Service.find(params[:id])
+  end
 end

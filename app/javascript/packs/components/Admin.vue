@@ -2,8 +2,8 @@
   Tabs(v-model="selTab", size='small', type="card", id="tabs-admin")
     TabPane(label="Персонал", name='personnel', icon="person")
       personnel
-    <!--TabPane(label="Услуги", name='services', icon="ios-pricetag")-->
-      <!--services-->
+    TabPane(label="Услуги", name='services', icon="ios-pricetag")
+      services
     <!--TabPane(label="Настройки", name='settings', icon="android-settings")-->
       <!--settings-->
 </template>

@@ -39,156 +39,158 @@
           code: '',
           name: '',
           surgery: false,
-          active: true
+          enabled: true,
         },
         managerId: null,
         paymentValue: 0,
         managers: [],
         table: this.$getConst('EMPTY_TABLE'),
-        loading: false
+        loading: false,
       }
     },
     computed: {
       recCount() {
-        return this.table.data.length
+        return this.table.data ? this.table.data.length : 0
       },
       addDisabled() {
-        return (this.service.name.length === 0) || (this.service.code.length === 0)
+        return !this.service.name.length || !this.service.code.length
       },
       editDisabled() {
-        return (this.service.id === null) || this.addDisabled
+        return !this.service.id || this.addDisabled
       },
       paymentDisabled() {
-        return (this.service.id === null) && (this.managerId === null)
-      }
+        return !this.service.id && !this.managerId
+      },
     },
     watch: {},
     methods: {
-      refresh() {
-        let request = this.axios({
-          method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/managers`
-        })
-          .then(response => {
-            this.managers = response.data
+      async refresh() {
+        const cb = async () => {
+          const res = await this.axios({
+            method: 'GET',
+            url: `managers`,
           })
 
-        this.$makeRequest(this, request)
-
-        this.reloadTable()
-      },
-      reloadTable() {
-        this.manager = {
-          id: null,
-          name: ''
+          this.managers = res.data
+          this.reloadTable()
         }
 
-        this.table.data = []
+        await this.$makeRequest(this, cb)
+      },
+      async reloadTable() {
+        this.manager = {
+          id: null,
+          name: '',
+        }
 
-        let request = this.axios({
-          method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/services`
-        })
-          .then(response => {
-            function createColumns(managers, app) {
-              let columns = [
-                {
-                  title: 'id',
-                  key: 'id',
-                  width: 70,
-                  align: 'center',
-                  sortable: true
-                },
-                {
-                  title: 'Код',
-                  key: 'code',
-                  width: 90,
-                  align: 'center',
-                  sortable: true,
-                },
-                {
-                  title: 'Название',
-                  key: 'name',
-                  width: 500,
-                  sortable: true,
-                },
-                {
-                  title: 'В работе',
-                  key: 'active',
-                  width: 100,
-                  align: 'center',
-                  sortable: true,
-                  render: (h, params) => {
-                    return h('div', [
-                      h('Icon', {
-                        props: {
-                          type: params.row.active ? 'checkmark-round' : 'ios-circle-outline',
-                          size: 'large'
-                        }
-                      })
-                    ])
-                  },
-                },
-                {
-                  title: 'Хирургия',
-                  key: 'surgery',
-                  width: 100,
-                  align: 'center',
-                  sortable: true,
-                  render: (h, params) => {
-                    return h('div', [
-                      h('Icon', {
-                        props: {
-                          type: params.row.surgery ? 'checkmark-round' : 'ios-circle-outline',
-                          size: 'large'
-                        }
-                      })
-                    ])
-                  }
-                }]
+        this.table.data = this.$getConst('EMPTY_TABLE')
 
-              managers.forEach(manager => {
-                columns.push({
-                  title: manager.name,
-                  key: manager.name,
-                  width: 130,
-                  align: 'center',
-                  render: (h, params) => {
-                    params.value = params.row[params.column.title]
+        const cb = async () => {
+          function createColumns(managers, app) {
+            let columns = [
+              {
+                title: 'id',
+                key: 'id',
+                width: 70,
+                align: 'center',
+                sortable: true,
+              },
+              {
+                title: 'Код',
+                key: 'code',
+                width: 90,
+                align: 'center',
+                sortable: true,
+              },
+              {
+                title: 'Название',
+                key: 'name',
+                width: 500,
+                sortable: true,
+              },
+              {
+                title: 'В работе',
+                key: 'enabled',
+                width: 100,
+                align: 'center',
+                sortable: true,
+                render: (h, params) => {
+                  return h('div', [
+                    h('Icon', {
+                      props: {
+                        type: params.row.enabled ? 'checkmark-round' : 'ios-circle-outline',
+                        size: 'large',
+                      },
+                    }),
+                  ])
+                },
+              },
+              {
+                title: 'Хирургия',
+                key: 'surgery',
+                width: 100,
+                align: 'center',
+                sortable: true,
+                render: (h, params) => {
+                  return h('div', [
+                    h('Icon', {
+                      props: {
+                        type: params.row.surgery ? 'checkmark-round' : 'ios-circle-outline',
+                        size: 'large',
+                      },
+                    }),
+                  ])
+                },
+              },
+            ]
 
-                    return h('div', {
-                      on: {
-                        click: () => {
-                          app.managerId = app._.find(app.managers, {name: params.column.title}).id
-                          app.paymentValue = params.value === '-' ? 0.00 : params.value
-                        }
-                      }
-                    }, [h('span', params.value)
-                    ])
-                  }
-                })
+            managers.forEach(manager => {
+              columns.push({
+                title: manager.name,
+                key: manager.name,
+                width: 130,
+                align: 'center',
+                render: (h, params) => {
+                  params.value = params.row[params.column.title]
+
+                  return h('div', {
+                    on: {
+                      click: () => {
+                        app.managerId = app._.find(app.managers, { name: params.column.title }).id
+                        app.paymentValue = params.value === '-' ? 0.00 : params.value
+                      },
+                    },
+                  }, [h('span', params.value),
+                  ])
+                },
               })
+            })
 
-              columns.push({className: 'invisible-column'})
+            columns.push({ className: 'invisible-column' })
 
-              return columns
-            }
+            return columns
+          }
 
-            let table = response.data.table
-
-            this.table.columns = createColumns(table.managers, this)
-            this.table.data = table.data
+          const res = await this.axios({
+            method: 'GET',
+            url: `payments`,
           })
 
-        this.$makeRequest(this, request)
+          let { data, managers } = res.data
+
+          this.table.columns = createColumns(managers, this)
+          this.table.data = data
+        }
+
+        this.$makeRequest(this, cb)
       },
       selectRow(curRow) {
         this.service = {
           id: curRow.id,
           code: curRow.code,
           name: curRow.name,
-          surgery: curRow.surgery === 1,
-          active: curRow.active === 1
+          surgery: Boolean(curRow.surgery),
+          enabled: Boolean(curRow.enabled),
         }
       },
       addService() {
@@ -197,7 +199,7 @@
         let request = this.axios({
           method: 'POST',
           url: `${this.$store.state.Main.apiLink}/services`,
-          data: params
+          data: params,
         })
           .then(response => {
             this.service = {
@@ -205,7 +207,7 @@
               code: '',
               name: '',
               surgery: false,
-              active: true
+              enabled: true,
             }
 
             this.$Message.success('Успешно добавлено!')
@@ -220,7 +222,7 @@
         let request = this.axios({
           method: 'PATCH',
           url: `${this.$store.state.Main.apiLink}/services`,
-          data: params
+          data: params,
         })
           .then(response => {
             this.$Message.success('Обновление успешно выполнено!')
@@ -237,29 +239,29 @@
         let params = {
           serviceId: this.service.id,
           managerId: this.managerId,
-          value: this.paymentValue
+          value: this.paymentValue,
         }
 
         let request = this.axios({
           method: 'PUT',
           url: `${this.$store.state.Main.apiLink}/payments`,
-          params: params
+          params: params,
         })
           .then(response => {
             this.$Message.success('Обновление успешно выполнено!')
             // ОПТИМИСТИЧНОЕ ОБНОВЛЕНИЕ
-            let updatedIndex = this._.findIndex(this.table.data, {id: this.service.id}),
-              updatedmanager = this._.find(this.managers, {id: this.managerId}).name
+            let updatedIndex = this._.findIndex(this.table.data, { id: this.service.id }),
+              updatedmanager = this._.find(this.managers, { id: this.managerId }).name
 
             this.table.data[updatedIndex][updatedmanager] = this.paymentValue
           })
 
         this.$makeRequest(this, request)
-      }
+      },
     },
     created() {
       this.refresh()
-    }
+    },
   }
 </script>
 
