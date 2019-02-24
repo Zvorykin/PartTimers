@@ -7,10 +7,10 @@
         Input(v-model.trim="medic.name", size='small', placeholder="ФИО", style="width: 225px")
           span(slot="prepend") id: {{medic.id}}
       FormItem(:labelWidth="60", label="Менеджер")
-        Select(v-model="medic.managerId", size="small", style="width:150px")
+        Select(v-model="medic.manager_id", size="small", style="width:150px")
           Option(v-for="item in managers", :value="item.id", :key="item.name")  {{item.name}}
       FormItem(:labelWidth="5")
-        Checkbox(v-model="medic.active") В работе
+        Checkbox(v-model="medic.enabled") В работе
       FormItem(:labelWidth="1")
         Button(type='primary', size="small", icon="plus-round", @click="add", shape="circle", :disabled="addDisabled")
       FormItem(:labelWidth="1")
@@ -28,139 +28,136 @@
         medic: {
           id: null,
           name: '',
-          active: true,
-          managerId: null,
+          enabled: true,
+          manager_id: null,
         },
         managers: [],
         table: this.$getConst('EMPTY_TABLE'),
-        loading: false
+        loading: false,
       }
     },
     computed: {
       recCount() {
-        return this.table.data.length
+        return this.table.data ? this.table.data.length : 0
       },
       addDisabled() {
-        return (this.medic.name.length === 0) || (this.medic.managerId === null)
+        return !this.medic.name || !this.medic.manager_id
       },
       editDisabled() {
-        return (this.medic.id === null) && this.addDisabled
-      }
+        return !this.medic.id && this.addDisabled
+      },
     },
     watch: {},
     methods: {
-      refresh() {
-        let managersRequest = this.axios({
+      async refresh() {
+        const cb = async () => this.axios({
           method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/managers/active`
+          url: `managers`,
         })
-          .then(response => {
-            this.managers = response.data.filter(item => {
-              return item.name !== 'Медик'
-            })
-          })
 
-        this.$makeRequest(this, managersRequest)
+        this.managers = await this.$makeRequest(this, cb)
 
         this.reloadTable()
       },
-      reloadTable() {
+      async reloadTable() {
         this.medic = {
           id: null,
           name: '',
-          active: true,
-          // managerId: null,
+          enabled: true,
+          manager_id: null,
         }
 
-        let request = this.axios({
+        const cb = async () => this.axios({
           method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/medics`
+          url: `medics`,
         })
-          .then(response => {
-            this.table.data = response.data
-          })
 
-        this.$makeRequest(this, request)
+        this.table.data = (await this.$makeRequest(this, cb))
+          .map(item => ({
+            ...item,
+            manager_name: item.manager.name,
+            manager_id: item.manager.id
+          }))
       },
       selectMedic(row) {
         this.medic.id = row.id
         this.medic.name = row.name
-        this.medic.active = (row.active === 1)
-        this.medic.managerId = this._.find(this.managers, {name: row.manager}).id
+        this.medic.enabled = Boolean(row.enabled)
+        this.medic.manager_id = row.manager.id
+        this.medic.manager_name = row.manager.name
       },
-      add() {
-        let params = this.medic
-
-        let request = this.axios({
-          method: 'POST',
-          url: `${this.$store.state.Main.apiLink}/medics`,
-          data: params
-        })
-          .then(response => {
-            this.reloadTable()
-            this.$Message.success('Успешно добавлено!')
+      async add() {
+        const cb = async () => {
+          await this.axios({
+            method: 'POST',
+            url: `medics`,
+            data: this.medic,
           })
 
-        this.$makeRequest(this, request)
-      },
-      update() {
-        let params = this.medic
+          this.reloadTable()
+          this.$Message.success('Успешно добавлено!')
+        }
 
-        let request = this.axios({
-          method: 'PATCH',
-          url: `${this.$store.state.Main.apiLink}/medics`,
-          data: params
-        })
-          .then(response => {
-            this.reloadTable()
-            this.$Message.success('Обновление успешно выполнено!')
+        this.$makeRequest(this, cb)
+      },
+      async update() {
+        const cb = async () => {
+          await this.axios({
+            method: 'PATCH',
+            url: `medics/${this.medic.id}`,
+            data: this.medic,
           })
 
-        this.$makeRequest(this, request)
-      }
+          this.reloadTable()
+          this.$Message.success('Обновление успешно выполнено!')
+        }
+
+        this.$makeRequest(this, cb)
+      },
     },
     created() {
       this.table.columns = [
-            {
-              title: 'id',
-              key: 'id',
-              width: 70,
-              align: 'center',
-              sortable: true
-            },
-            {
-              title: 'ФИО',
-              key: 'name',
-              width: 300,
-              sortable: true,
-            },
-            {
-              title: 'Менеджер',
-              key: 'manager',
-              width: 150,
-              sortable: true,
-            },
-            {
-              title: 'В работе',
-              key: 'active',
-              width: 100,
-              align: 'center',
-              sortable: true,
-              render: (h, params) => {
-                return h('div', [
-                  h('Icon', {
-                    props: {
-                      type: params.row.active ? 'checkmark-round' : 'ios-circle-outline',
-                      size: 'large'
-                    }
-                  })
-                ])
-              }
-            },
-            {className: 'invisible-column'}]
+        {
+          title: 'id',
+          key: 'id',
+          width: 70,
+          align: 'center',
+          sortable: true,
+        },
+        {
+          title: 'ФИО',
+          key: 'name',
+          width: 300,
+          sortable: true,
+        },
+        {
+          title: 'Менеджер',
+          key: 'manager_name',
+          width: 150,
+          sortable: true,
+        },
+        {
+          title: 'В работе',
+          key: 'enabled',
+          width: 100,
+          align: 'center',
+          sortable: true,
+          render: (h, params) => {
+            return h('div', [
+              h('Icon', {
+                props: {
+                  type: params.row.enabled ? 'checkmark-round' : 'ios-circle-outline',
+                  size: 'large',
+                },
+              }),
+            ])
+          },
+        },
+        { className: 'invisible-column' },
+      ]
 
       this.refresh()
-    }
+    },
   }
 </script>
 

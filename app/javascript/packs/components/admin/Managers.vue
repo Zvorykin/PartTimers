@@ -7,7 +7,7 @@
         Input(v-model="manager.name", size='small', placeholder="ФИО", style="width: 175px")
           span(slot="prepend") id: {{manager.id}}
       FormItem(:labelWidth="5")
-        Checkbox(v-model="manager.active") В работе
+        Checkbox(v-model="manager.enabled") В работе
       FormItem(:labelWidth="1")
         Button(type='primary', size="small", icon="plus-round", @click="add", shape="circle", :disabled="addDisabled")
       FormItem(:labelWidth="1")
@@ -25,44 +25,41 @@
         manager: {
           id: null,
           name: '',
-          active: true,
+          enabled: true,
         },
         table: this.$getConst('EMPTY_TABLE'),
-        loading: false
+        loading: false,
       }
     },
     computed: {
       recCount() {
-        return this.table.data.length
+        return this.table.data ? this.table.data.length : 0
       },
       addDisabled() {
-        return this.manager.name.length === 0
+        return !this.manager.name.length
       },
       editDisabled() {
-        return this.manager.id === null
-      }
+        return !this.manager.id
+      },
     },
     watch: {},
     methods: {
       async refresh() {
         this.reloadTable()
       },
-      reloadTable() {
+      async reloadTable() {
         this.manager = {
           id: null,
           name: '',
-          active: true,
+          enabled: true,
         }
 
-        let request = this.axios({
+        const cb = async () => this.axios({
           method: 'GET',
-          url: `${this.$store.state.Main.apiLink}/managers`
+          url: `managers`,
         })
-          .then(response => {
-            this.table.data = response.data
-          })
 
-        this.$makeRequest(this, request)
+        this.table.data = await this.$makeRequest(this, cb)
       },
       rowClassName(row, index) {
         if (row.name === 'Медик') {
@@ -71,44 +68,42 @@
         return ''
       },
       selectRow(row) {
-        if (row.id !== 1) {
+        if (row.name !== 'Медик') {
           this.manager.id = row.id
           this.manager.name = row.name
-          this.manager.active = (row.active === 1)
+          this.manager.enabled = Boolean(row.enabled)
         }
       },
-      add() {
-        let params = this.manager
-
-        let request = this.axios({
-          method: 'POST',
-          url: `${this.$store.state.Main.apiLink}/managers`,
-          data: params
-        })
-          .then(response => {
-            this.reloadTable()
-            this.$emit('refreshMedicsForm')
-            this.$Message.success('Успешно добавлено!')
+      async add() {
+        const cb = async () => {
+          await this.axios({
+            method: 'POST',
+            url: `managers`,
+            data: this.manager,
           })
 
-        this.$makeRequest(this, request)
+          this.reloadTable()
+          this.$emit('refreshMedicsForm')
+          this.$Message.success('Успешно добавлено!')
+        }
+
+        this.$makeRequest(this, cb)
       },
       update() {
-        let params = this.manager
-
-        let request = this.axios({
-          method: 'PATCH',
-          url: `${this.$store.state.Main.apiLink}/managers`,
-          data: params
-        })
-          .then(response => {
-            this.$emit('refreshMedicsForm')
-            this.reloadTable()
-            this.$Message.success('Обновление успешно выполнено!')
+        const cb = async () => {
+          await this.axios({
+            method: 'PATCH',
+            url: `managers/${this.manager.id}`,
+            data: this.manager,
           })
 
-        this.$makeRequest(this, request)
-      }
+          this.$emit('refreshMedicsForm')
+          this.reloadTable()
+          this.$Message.success('Обновление успешно выполнено!')
+        }
+
+        this.$makeRequest(this, cb)
+      },
     },
     created() {
       this.table.columns = [
@@ -117,7 +112,7 @@
           key: 'id',
           width: 70,
           align: 'center',
-          sortable: true
+          sortable: true,
         },
         {
           title: 'ФИО',
@@ -127,7 +122,7 @@
         },
         {
           title: 'В работе',
-          key: 'active',
+          key: 'enabled',
           width: 100,
           align: 'center',
           sortable: true,
@@ -135,17 +130,18 @@
             return h('div', [
               h('Icon', {
                 props: {
-                  type: params.row.active ? 'checkmark-round' : 'ios-circle-outline',
-                  size: 'large'
-                }
-              })
+                  type: params.row.enabled ? 'checkmark-round' : 'ios-circle-outline',
+                  size: 'large',
+                },
+              }),
             ])
-          }
+          },
         },
-        {className: 'invisible-column'}]
+        { className: 'invisible-column' },
+      ]
 
       this.refresh()
-    }
+    },
   }
 </script>
 

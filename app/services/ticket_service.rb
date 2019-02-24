@@ -1,7 +1,5 @@
 module TicketService
   class << self
-    include BasicService
-
     def find(params)
       query_params = %i[date medic_id enabled show_surgical patient_name]
       date, medic_id, enabled, surgical, patient_name = params.values_at(*query_params)
@@ -16,7 +14,7 @@ module TicketService
         end
 
         where_conditions[:medic_id] = medic_id if medic_id
-        where_conditions[:enabled] = parse_boolean(enabled) unless enabled.nil?
+        where_conditions[:enabled] = enabled unless enabled.nil?
         where_conditions[:services] = { surgery: surgical } unless surgical.nil?
       end
 

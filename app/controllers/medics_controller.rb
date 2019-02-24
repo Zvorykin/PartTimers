@@ -3,12 +3,9 @@ class MedicsController < ApplicationController
 
   # GET /medics
   def index
-    @medics = Medic.includes(:manager)
-                .references(:managers)
-                .order(:name)
+    param! :enabled, :boolean
 
-    enabled = params[:enabled]
-    @medics = @medics.where(enabled: enabled) if enabled
+    @medics = MedicsService.find(params)
   end
 
   # GET /medics/1
@@ -17,7 +14,9 @@ class MedicsController < ApplicationController
 
   # POST /medics
   def create
-    @medic = Medic.new(medic_params)
+    validate_basic_params! true
+
+    @medic = MedicsService.create(params)
 
     if @medic.save
       render :show, status: :created, location: @medic
@@ -28,7 +27,10 @@ class MedicsController < ApplicationController
 
   # PATCH/PUT /medics/1
   def update
-    if @medic.update(medic_params)
+    validate_basic_params!
+    param! :enabled, :boolean
+
+    if @medic.update(sanitize_params)
       render :show, status: :ok, location: @medic
     else
       render json: @medic.errors, status: :unprocessable_entity
@@ -42,13 +44,18 @@ class MedicsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_medic
-    @medic = Medic.joins(:manager).find(params[:id])
+  def validate_basic_params!(required = false)
+    param! :name, String, required: required
+    param! :manager_id, Integer, required: required
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def medic_params
-    params.require(:medic).permit(:name, :enabled)
+  def sanitize_params
+    params.to_h.except(:action, :controller, :medic, :manager_name)
+  end
+
+  def set_medic
+    @medic = Medic.includes(:manager)
+               .references(:managers)
+               .find(params[:id])
   end
 end

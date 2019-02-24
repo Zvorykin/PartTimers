@@ -53,7 +53,9 @@
       },
     },
     mounted() {
-      this.login(true)
+      if (process.env.NODE_ENV !== 'production') {
+        this.login(true)
+      }
     },
   }
 </script>

@@ -11,7 +11,7 @@
         Select(v-model="managerId", size="small", style="width:150px" label-in-value @on-change="showReport")
           Option(v-for="item in managers", :value="item.id", :key="item.name") {{item.name}}
       FormItem(label='Тип отчета', :labelWidth="70")
-        RadioGroup(v-model="reportType", @on-change="showReport")
+        RadioGroup(v-model="reportType", :disabled='showDisabled', @on-change="showReport")
           Radio(label="medics") Врачи
           Radio(label="managers") Менеджеры
           Radio(label="homeMedics") Врачи поликлиники
@@ -28,11 +28,11 @@
     data() {
       return {
         datePickerFormat: this.$FORMATS.shortLocalDate,
-//        dateFrom: '2017-10-01', // для разработки
-        dateFrom: this.$moment().startOf('month').format(),
-        dateBy: this.$moment().startOf('month').add(1, 'months').format(),
-//        reportType: 'medics', // для разработки
-        reportType: '',
+       dateFrom: this.$moment('2019-02-01').toDate(), // для разработки
+        // dateFrom: this.$moment().startOf('month').toDate(),
+        dateBy: this.$moment().startOf('month').add(1, 'months').toDate(),
+       reportType: 'medics', // для разработки
+        // reportType: '',
         managerId: undefined,
         table: this.$getConst('EMPTY_TABLE'),
         loading: false,
@@ -41,16 +41,16 @@
     },
     computed: {
       total() {
-        let total = 0
-        if (this.table.data.length > 0) {
-          this.table.data.forEach(row => {
-            total += row.summary
-          })
-        }
-        return total
+        return this.table.data.reduce((acc, row) => {
+          acc += row.summary || 0
+          return acc
+        }, 0)
       },
       saveDisabled() {
-        return (this.table.data.length === 0) || (this.reportType === null)
+        return !this.table.data.length || !this.reportType
+      },
+      showDisabled() {
+        return !this.reportType
       }
     },
     watch: {
