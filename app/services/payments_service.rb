@@ -1,22 +1,24 @@
 module PaymentsService
   class << self
     def find
-      services = Service.joins(:payments).includes(:payments, :managers).all
+      services = Service.includes(payments: :manager).references(:payments, :managers)
 
-      result = []
+      services.reduce([]) do |acc, service|
+        service_rec = {
+          id: service[:id],
+          name: service[:name],
+          surgery: service[:surgery]
+        }
 
-      services.each do |service|
         service.payments.each do |payment|
-          manager_name = payment[:manager][:name]
+          manager_name = payment.manager[:name]
           value = payment[:value]
 
-          service[manager_name] = value
+          service_rec[manager_name] = value
         end
 
-        result.push(service)
+        acc.push(service_rec)
       end
-
-      result
     end
   end
 end

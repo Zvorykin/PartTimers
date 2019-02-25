@@ -3,5 +3,4 @@ class Service < ApplicationRecord
 
   has_and_belongs_to_many :tickets
   has_many :payments
-  has_many :managers, through: :payments
 end
