@@ -1,13 +1,21 @@
 module PaymentsService
   class << self
     def find
-      services = Service.includes(payments: :manager).references(:payments, :managers)
+      services = Service.includes(payments: :manager)
+                   .references(:payments, :managers)
 
-      services.reduce([]) do |acc, service|
+      managers = Manager.joins(:payments)
+                   .references(:payments)
+                   .distinct
+                   .select(:name)
+
+      services = services.reduce([]) do |acc, service|
         service_rec = {
           id: service[:id],
           name: service[:name],
-          surgery: service[:surgery]
+          surgery: service[:surgery],
+          enabled: service[:enabled],
+          code: service[:code]
         }
 
         service.payments.each do |payment|
@@ -17,8 +25,30 @@ module PaymentsService
           service_rec[manager_name] = value
         end
 
+        managers.each do |manager|
+          manager_name = manager[:name]
+          service_rec[manager_name] = service_rec[manager_name] || 0.00
+        end
+
         acc.push(service_rec)
       end
+
+      {
+        services: services,
+        managers: managers
+      }
+    end
+
+    def update(params)
+      value, service_id, manager_id = params.values_at(:value, :service_id, :manager_id)
+
+      payment = Payment.find_or_initialize_by(
+        service_id: service_id,
+        manager_id: manager_id
+      )
+
+      payment.update(value: value)
+      payment.save
     end
   end
 end

@@ -1,1 +1,2 @@
-json.array! @payments
+json.data @payments
+json.managers @managers

@@ -1,7 +1,13 @@
-# README
+# PartTimers
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This was real Node.js + Vue.js SPA successfully running on my previous job since 2017.
+Is definitely has some architectural mistakes but it was done as it was done.
+
+Now it was rewritten using Ruby on Rails and became simple pet project to improve RoR skills.
+
+
+
+
 
 Things you may want to cover:
 

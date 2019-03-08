@@ -1,15 +1,15 @@
 <template lang="pug">
   div(id="app")
     Tabs(v-model="selTab", size='small')
-      TabPane(label="Логин", name='login', icon="log-in", v-if="!loggedIn")
+      TabPane(label="Логин", name='login', icon="log-in",  v-if="!loggedIn", :disabled="loggedIn")
         login
-      TabPane(label="Направления", name="tickets", icon="edit", v-if="loggedIn")
+      TabPane(label="Направления", name="tickets", icon="edit", :disabled="!loggedIn")
         tickets-list(v-if="loggedIn")
-      TabPane(label="Отчет по направлениям", name="ticketsReport", icon="ios-list-outline", v-if="isAdmin")
+      TabPane(label="Отчет по направлениям", name="ticketsReport", icon="ios-list-outline", :disabled="!isAdmin")
         tickets-report(v-if="isAdmin")
       <!--TabPane(label="Отчет по выплатам", name="paymentsReport", icon="ios-list", v-if="isAdmin")-->
-        <!--PaymentsReport(v-if="isAdmin")-->
-      TabPane(label="Администрирование", name="admin", icon="settings", v-if="isAdmin")
+      <!--PaymentsReport(v-if="isAdmin")-->
+      TabPane(label="Администрирование", name="admin", icon="settings", :disabled="!isAdmin")
         Admin(v-if="isAdmin")
 </template>
 
@@ -35,7 +35,12 @@
       },
       isAdmin() {
         return this.$store.state.Main.admin
-      }
+      },
+    },
+    watch: {
+      loggedIn(value) {
+        this.selTab = value ? 'tickets' : 'login'
+      },
     },
     data() {
       return {
@@ -43,16 +48,15 @@
         selTab: 'login',
       }
     },
-    methods: {
-    },
+    methods: {},
     async created() {
       this.$Loading.config({
         height: 5,
       })
 
       this.axios.defaults.baseURL = `${location.origin}/api`
-      this.axios.defaults.headers.common['Content-Type'] = 'application/json';
-      this.axios.defaults.headers.common['Accept'] = 'application/json';
+      this.axios.defaults.headers.common['Content-Type'] = 'application/json'
+      this.axios.defaults.headers.common['Accept'] = 'application/json'
     },
   }
 </script>

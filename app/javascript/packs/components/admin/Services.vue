@@ -11,7 +11,7 @@
       FormItem(:labelWidth="5")
         Checkbox(v-model="service.surgery") Хирургия
       FormItem(:labelWidth="5")
-        Checkbox(v-model="service.active") В работе
+        Checkbox(v-model="service.enabled") В работе
       FormItem(:labelWidth="1")
         Button(type='primary', size="small", icon="plus-round", @click="addService", shape="circle", :disabled="addDisabled")
       FormItem(:labelWidth="1")
@@ -23,9 +23,9 @@
         InputNumber(v-model="paymentValue", :step="10", :min="0", size="small", style="width: 100px")
       FormItem(:labelWidth="1")
         Button(type='warning', size="small", icon="checkmark-round", @click="updatePayment", shape="circle",
-        :disabled="paymentDisabled")
+          :disabled="paymentDisabled")
     Table(border, size='small', :columns="table.columns", :data="table.data", height="490", width="1280",
-    @on-current-change="selectRow",  highlight-row, :loading="loading")
+      @on-current-change="selectRow",  highlight-row, :loading="loading")
       span(slot="footer") Всего: {{recCount}}
 </template>
 
@@ -53,7 +53,8 @@
         return this.table.data ? this.table.data.length : 0
       },
       addDisabled() {
-        return !this.service.name.length || !this.service.code.length
+        return !this.service.name || !this.service.name.length ||
+          !this.service.code || !this.service.code.length
       },
       editDisabled() {
         return !this.service.id || this.addDisabled
@@ -69,6 +70,9 @@
           const res = await this.axios({
             method: 'GET',
             url: `managers`,
+            params: {
+              include_medic: true,
+            },
           })
 
           this.managers = res.data
@@ -83,7 +87,7 @@
           name: '',
         }
 
-        this.table.data = this.$getConst('EMPTY_TABLE')
+        this.table = this.$getConst('EMPTY_TABLE')
 
         const cb = async () => {
           function createColumns(managers, app) {
@@ -105,7 +109,7 @@
               {
                 title: 'Название',
                 key: 'name',
-                width: 500,
+                width: 350,
                 sortable: true,
               },
               {
@@ -154,14 +158,15 @@
                   params.value = params.row[params.column.title]
 
                   return h('div', {
-                    on: {
-                      click: () => {
-                        app.managerId = app._.find(app.managers, { name: params.column.title }).id
-                        app.paymentValue = params.value === '-' ? 0.00 : params.value
+                      on: {
+                        click: () => {
+                          app.managerId = (app.managers.find(({ name }) => name === params.column.title)).id
+                          app.paymentValue = params.value || 0.00
+                        },
                       },
                     },
-                  }, [h('span', params.value),
-                  ])
+                    [h('span', params.value || '-')],
+                  )
                 },
               })
             })
@@ -193,70 +198,66 @@
           enabled: Boolean(curRow.enabled),
         }
       },
-      addService() {
-        let params = this.service
-
-        let request = this.axios({
-          method: 'POST',
-          url: `${this.$store.state.Main.apiLink}/services`,
-          data: params,
-        })
-          .then(response => {
-            this.service = {
-              id: null,
-              code: '',
-              name: '',
-              surgery: false,
-              enabled: true,
-            }
-
-            this.$Message.success('Успешно добавлено!')
-            this.reloadTable()
+      async addService() {
+        const cb = async () => {
+          await this.axios({
+            method: 'POST',
+            url: `services`,
+            data: this.service,
           })
 
-        this.$makeRequest(this, request)
+          this.service = {
+            id: null,
+            code: '',
+            name: '',
+            surgery: false,
+            enabled: true,
+          }
+
+          this.$Message.success('Успешно добавлено!')
+          this.reloadTable()
+        }
+
+        this.$makeRequest(this, cb)
       },
-      updateService() {
-        let params = this.service
-
-        let request = this.axios({
-          method: 'PATCH',
-          url: `${this.$store.state.Main.apiLink}/services`,
-          data: params,
-        })
-          .then(response => {
-            this.$Message.success('Обновление успешно выполнено!')
-            this.reloadTable()
+      async updateService() {
+        const cb = async () => {
+          await this.axios({
+            method: 'PATCH',
+            url: `services/${this.service.id}`,
+            data: this.service,
           })
 
-        this.$makeRequest(this, request)
+          this.$Message.success('Обновление успешно выполнено!')
+          this.reloadTable()
+        }
+
+        this.$makeRequest(this, cb)
       },
       updatePayment() {
         if (this.paymentDisabled) {
           return false
         }
 
-        let params = {
-          serviceId: this.service.id,
-          managerId: this.managerId,
-          value: this.paymentValue,
-        }
-
-        let request = this.axios({
-          method: 'PUT',
-          url: `${this.$store.state.Main.apiLink}/payments`,
-          params: params,
-        })
-          .then(response => {
-            this.$Message.success('Обновление успешно выполнено!')
-            // ОПТИМИСТИЧНОЕ ОБНОВЛЕНИЕ
-            let updatedIndex = this._.findIndex(this.table.data, { id: this.service.id }),
-              updatedmanager = this._.find(this.managers, { id: this.managerId }).name
-
-            this.table.data[updatedIndex][updatedmanager] = this.paymentValue
+        const cb = async () => {
+          await this.axios({
+            method: 'PUT',
+            url: `services/${this.service.id}/managers/${this.managerId}/payment`,
+            data: {
+              value: this.paymentValue,
+            },
           })
 
-        this.$makeRequest(this, request)
+          const updatedRow = this.table.data.find(({id}) => id === this.service.id),
+            updatedRowIndex = this.table.data.indexOf(updatedRow),
+            updatedManagerName = this.managers.find(({id}) => id === this.managerId).name
+
+          this.table.data[updatedRowIndex][updatedManagerName] = this.paymentValue
+
+          this.$Message.success('Обновление успешно выполнено!')
+        }
+
+        this.$makeRequest(this, cb)
       },
     },
     created() {

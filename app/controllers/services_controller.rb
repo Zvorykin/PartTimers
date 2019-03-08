@@ -15,7 +15,9 @@ class ServicesController < ApplicationController
 
   # POST /services
   def create
-    @service = Service.new(service_params)
+    validate_basic_params!(true)
+
+    @service = ServicesService.create(params)
 
     if @service.save
       render :show, status: :created, location: @service
@@ -26,7 +28,10 @@ class ServicesController < ApplicationController
 
   # PATCH/PUT /services/1
   def update
-    if @service.update(service_params)
+    validate_basic_params!
+    param! :enabled, :boolean
+
+    if @service.update(sanitize_params)
       render :show, status: :ok, location: @service
     else
       render json: @service.errors, status: :unprocessable_entity
@@ -38,7 +43,25 @@ class ServicesController < ApplicationController
     @service.destroy
   end
 
+  def set_payment
+    param! :service_id, Integer, required: true
+    param! :manager_id, Integer, required: true
+    param! :value, Float, required: true
+
+    @payment = PaymentsService.update(params)
+  end
+
   private
+
+  def validate_basic_params!(required = false)
+    param! :name, String, required: required
+    param! :code, String, required: required
+    param! :surgery, :boolean, required: required
+  end
+
+  def sanitize_params
+    params.to_h.except(:action, :controller, :service)
+  end
 
   def set_service
     @service = Service.find(params[:id])
