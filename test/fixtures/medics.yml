@@ -1,9 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString1
+  name: medic 1
   manager_id: 2
+  id: 1
 
 two:
-  name: MyString2
+  name: medic 2
   manager_id: 3
+  id: 2

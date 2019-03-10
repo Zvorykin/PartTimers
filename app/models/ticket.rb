@@ -7,5 +7,5 @@ class Ticket < ApplicationRecord
   validates_presence_of :patient_name
   validates_presence_of :date
   validates_presence_of :medic
-  validates_presence_of :services
+  validates_presence_of :services, on: :create
 end

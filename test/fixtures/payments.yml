@@ -6,15 +6,15 @@
 #
 one:
   manager_id: 1
-  service_id: 1
+  service: one
   value: 100
 
 two:
   manager_id: 2
-  service_id: 2
+  service: two
   value: 50
 
 three:
   manager_id: 1
-  service_id: 2
+  service: two
   value: 0

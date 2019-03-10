@@ -49,6 +49,7 @@ module PaymentsService
 
       payment.update(value: value)
       payment.save
+      payment
     end
 
     def get_manager_payments(manager_id)

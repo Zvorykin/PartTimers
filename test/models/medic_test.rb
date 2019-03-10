@@ -24,6 +24,6 @@ class MedicTest < ActiveSupport::TestCase
     @medic.save
     duplicate_medic.save
   rescue => e
-    assert e.class.name == 'ActiveRecord::RecordNotUnique'
+    assert e.class == ActiveRecord::RecordNotUnique
   end
 end

@@ -4,7 +4,7 @@ one:
   code: code1
   name: MyString1
   surgery: false
-  enabled: false
+  enabled: true
 
 two:
   code: code2

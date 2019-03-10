@@ -5,32 +5,16 @@ Is definitely has some architectural mistakes but it was done as it was done.
 
 Now it was rewritten using Ruby on Rails and became simple pet project to improve RoR skills.
 
-As usual
+As usual `bundle` then `yarn`
 
-`bundle`
+This app has no real authorization cause it was run on single laptop and there was two user types:
+* 'user' that can only view and add tickets
+* 'admin' that can work with tickets, generate reports and edit app's dictionaries
 
-then
+So there are simplified login form (admin pass `admin`) :-)
+Still original app rejected queries to protected resources unless they were fired from localhost.
 
-`yarn`
-
-
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Run:
+* rails `./bin/rails server` `(http://127.0.0.1:3000/)`
+* webpack `ruby ./bin/webpack-dev-server`
+* tests `./bin/rake test`

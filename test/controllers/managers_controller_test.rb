@@ -12,7 +12,7 @@ class ManagersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create manager" do
     assert_difference('Manager.count') do
-      post managers_url, params: { manager: { name: @manager.name } }, as: :json
+      post managers_url, params: { name: 'new manager' }, as: :json
     end
 
     assert_response 201
@@ -24,7 +24,7 @@ class ManagersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update manager" do
-    patch manager_url(@manager), params: { manager: { name: @manager.name } }, as: :json
+    patch manager_url(@manager), params: { name: @manager.name }, as: :json
     assert_response 200
   end
 

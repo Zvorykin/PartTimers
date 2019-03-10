@@ -1,13 +1,49 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  patient_name: MyString
+  patient_name: 11111111
   date: 2019-01-03
-  enabled: false
+  enabled: true
   medic_id: 1
+  services: [one, two]
+  id: 1
 
 two:
-  patient_name: MyString
+  patient_name: 222222222
+  date: 2019-01-03
+  enabled: true
+  medic_id: 2
+  services: [two]
+  id: 2
+
+three:
+  patient_name: 33333333
+  date: 2019-01-03
+  enabled: true
+  medic_id: 1
+  services: [one]
+  id: 3
+
+four:
+  patient_name: 444444444
+  date: 2019-01-03
+  enabled: true
+  medic_id: 2
+  services: [one, two]
+  id: 4
+
+five:
+  patient_name: 555555
+  date: 2019-01-03
+  enabled: true
+  medic_id: 1
+  services: [one, two]
+  id: 5
+
+six:
+  patient_name: 66666666
   date: 2019-01-03
   enabled: false
   medic_id: 2
+  services: [one, two]
+  id: 6

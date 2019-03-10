@@ -25,6 +25,7 @@ class PaymentTest < ActiveSupport::TestCase
   end
 
   test "save should be true" do
+    @payment.manager_id = 3
     assert @payment.save
   end
 end

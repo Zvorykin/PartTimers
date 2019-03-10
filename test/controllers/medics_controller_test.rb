@@ -10,9 +10,15 @@ class MedicsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "manager_id should exits" do
+    post medics_url, params: { name: 'new medic' }, as: :json
+
+    assert_response 400
+  end
+
   test "should create medic" do
     assert_difference('Medic.count') do
-      post medics_url, params: { medic: { name: @medic.name } }, as: :json
+      post medics_url, params: { name: 'new medic', manager_id: Manager.first.id }, as: :json
     end
 
     assert_response 201
@@ -24,7 +30,7 @@ class MedicsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update medic" do
-    patch medic_url(@medic), params: { medic: { name: @medic.name } }, as: :json
+    patch medic_url(@medic), params: { name: @medic.name }, as: :json
     assert_response 200
   end
 
