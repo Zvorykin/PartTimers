@@ -1,11 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  type: 
-  password_digest: MyString
+one: {}
 
-two:
-  name: MyString
-  type: 
-  password_digest: MyString
+two: {}

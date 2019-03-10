@@ -4,8 +4,10 @@ one:
   patient_name: MyString
   date: 2019-01-03
   enabled: false
+  medic_id: 1
 
 two:
   patient_name: MyString
   date: 2019-01-03
   enabled: false
+  medic_id: 2

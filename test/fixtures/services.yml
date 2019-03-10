@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  code: MyString
-  name: MyString
-  surgery: 
+  code: code1
+  name: MyString1
+  surgery: false
   enabled: false
 
 two:
-  code: MyString
-  name: MyString
-  surgery: 
-  enabled: false
+  code: code2
+  name: MyString2
+  surgery: true
+  enabled: true

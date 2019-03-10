@@ -5,7 +5,13 @@ Is definitely has some architectural mistakes but it was done as it was done.
 
 Now it was rewritten using Ruby on Rails and became simple pet project to improve RoR skills.
 
+As usual
 
+`bundle`
+
+then
+
+`yarn`
 
 
 
