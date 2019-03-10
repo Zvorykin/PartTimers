@@ -7,8 +7,8 @@
         tickets-list(v-if="loggedIn")
       TabPane(label="Отчет по направлениям", name="ticketsReport", icon="ios-list-outline", :disabled="!isAdmin")
         tickets-report(v-if="isAdmin")
-      <!--TabPane(label="Отчет по выплатам", name="paymentsReport", icon="ios-list", v-if="isAdmin")-->
-      <!--PaymentsReport(v-if="isAdmin")-->
+      TabPane(label="Отчет по выплатам", name="paymentsReport", icon="ios-list", :disabled="!isAdmin")
+        PaymentsReport(v-if="isAdmin")
       TabPane(label="Администрирование", name="admin", icon="settings", :disabled="!isAdmin")
         Admin(v-if="isAdmin")
 </template>

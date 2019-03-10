@@ -1,1 +1,1 @@
-json.extract! report, :data, :columns
+# json.extract! report, :data, :columns

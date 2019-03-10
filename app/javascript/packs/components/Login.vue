@@ -20,7 +20,7 @@
     components: {},
     data() {
       return {
-        password: "5",
+        password: "admin",
       }
     },
     computed: {},

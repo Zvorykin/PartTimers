@@ -50,5 +50,10 @@ module PaymentsService
       payment.update(value: value)
       payment.save
     end
+
+    def get_manager_payments(manager_id)
+      Payment.select('service_id', 'value')
+        .where(manager_id: manager_id)
+    end
   end
 end

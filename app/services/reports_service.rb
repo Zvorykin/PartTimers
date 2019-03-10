@@ -3,9 +3,7 @@ module ReportsService
     def get_tickets_report(params)
       date_range = params[:date_from].to_date..params[:date_by].to_date
 
-      tickets = Ticket
-                  .includes(:medic, :services)
-                  .references(:medics, :services)
+      tickets = Ticket.eager_load(:medic, :services)
                   .where(
                     date: date_range,
                     enabled: true
@@ -31,7 +29,7 @@ module ReportsService
       data = []
 
       medic_data.each do |medic_name, medic_stats|
-        medic_stats[:summary] = medic_stats.values.reduce(0) { |sum, value| sum + value }
+        medic_stats[:summary] = medic_stats.values.reduce(0, &:+)
         medic_stats[:name] = medic_name
         data << medic_stats
       end
@@ -39,6 +37,26 @@ module ReportsService
       {
         data: data.sort_by { |item| item['name'] },
         columns: columns.uniq
+      }
+    end
+
+    def get_payments_report(params)
+      date_range = params[:date_from].to_date..params[:date_by].to_date
+      manager_id = params[:manager_id]
+
+      payments = PaymentsService.get_manager_payments(1)
+
+      medics = Medic.eager_load(tickets: :services)
+                 .where(
+                   tickets: {
+                     enabled: true,
+                     date: date_range
+                   }
+                 )
+
+      {
+        medics: medics,
+        payments: payments
       }
     end
   end

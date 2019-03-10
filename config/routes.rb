@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     get 'reports/tickets', to: 'reports#view_tickets'
     post 'reports/tickets', to: 'reports#save_tickets' # to be done later
 
+    get 'reports/payments', to: 'reports#view_payments'
+
     get 'payments', to: 'payments#index'
     put 'services/:service_id/managers/:manager_id/payment', to: 'services#set_payment'
   end
