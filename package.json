@@ -19,6 +19,7 @@
   "devDependencies": {
     "vue-loader": "14.2.2",
     "vue-template-compiler": "2.5.17",
-    "webpack-dev-server": "2.11.2"
+    "webpack-cli": "3.1.1",
+    "webpack-dev-server": "3.0.0"
   }
 }
