@@ -9,7 +9,7 @@ gem 'rails', '~> 5.2.1'
 gem 'sqlite3'
 # gem 'sqlite3', git: "https://github.com/larskanis/sqlite3-ruby", branch: "add-gemspec" if Gem.win_platform?
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 5.5'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
