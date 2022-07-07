@@ -8,7 +8,7 @@
     "iview": "2.14.3",
     "iview-loader": "1.2.2",
     "lodash": "4.17.13",
-    "moment": "2.22.2",
+    "moment": "2.29.4",
     "pug": "2.0.3",
     "vue": "2.5.17",
     "vue-axios": "2.1.4",
